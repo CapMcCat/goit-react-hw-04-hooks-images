@@ -4,7 +4,7 @@ import s from './Modal.module.css';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export const Modal = ({ onClose, url }) => {
+export const Modal = ({ onClose, children }) => {
   useEffect(() => {
     window.addEventListener('keydown', handleKeydown);
     return () => {
@@ -28,9 +28,7 @@ export const Modal = ({ onClose, url }) => {
 
   return createPortal(
     <div className={s.Overlay} onClick={handleBackdropClick}>
-      <div className={s.Modal}>
-        <img src={url} alt="" />
-      </div>
+      <div className={s.Modal}>{children}</div>
     </div>,
     modalRoot
   );

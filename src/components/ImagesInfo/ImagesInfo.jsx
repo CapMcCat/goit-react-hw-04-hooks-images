@@ -15,7 +15,7 @@ const Status = {
 
 const KEY = '23664732-922ae8a04b91fba4e55f74778';
 
-export const ImagesInfo = ({ searchValue }) => {
+export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
   const [prevSearchValue, setPrevSearchValue] = useState('');
   const [error, setError] = useState(null);
   const [status, setStatus] = useState(Status.IDLE);
@@ -34,15 +34,23 @@ export const ImagesInfo = ({ searchValue }) => {
   const nextSearchValue = searchValue;
 
   useEffect(() => {
+    if (nextSearchValue === ' ') {
+      setStatus(Status.IDLE);
+      return;
+    }
+
     if (prevSearchValue !== nextSearchValue) {
-      setStatus(Status.PENDING);
       setPage(1);
+      setError(null);
       setPrevSearchValue(nextSearchValue);
+      setStatus(Status.PENDING);
 
       API.fetchPictures(nextSearchValue, page, KEY)
         .then(images => {
           if (images.hits.length === 0) {
             toast.error(`Не находим картинок по запросу ${nextSearchValue}`);
+
+            return;
           }
           setImages(images.hits);
           setStatus(Status.RESOLVED);
@@ -50,8 +58,6 @@ export const ImagesInfo = ({ searchValue }) => {
         .catch(error => {
           setError(error);
           setStatus(Status.REJECTED);
-          console.log(error.message);
-          console.log(error);
         });
     }
     if (prevPage !== page && page > prevPage) {
@@ -59,14 +65,24 @@ export const ImagesInfo = ({ searchValue }) => {
         .then(images => {
           if (images.hits.length === 0) {
             toast(`Закончились картинки по запросу ${nextSearchValue}`);
+            console.log(
+              'консоль images.hits внутри if images.hits.length === 0 в запросе на картинки на след странице',
+              images.hits
+            );
+            return;
           }
-
+          console.log(
+            'консоль images.hits внутри  запроса на картинки на след странице',
+            images.hits
+          );
           setImages(prevImages => [...prevImages, ...images.hits]);
           setStatus(Status.RESOLVED);
         })
         .catch(error => {
           setError(error);
-          setStatus(Status.REJECTED);
+          toast(`Закончились картинки по запросу ${nextSearchValue}`);
+          console.log('консоль ошибки', error);
+          //setStatus(Status.REJECTED);
         })
         .finally(() => {
           window.scrollTo({
@@ -87,8 +103,11 @@ export const ImagesInfo = ({ searchValue }) => {
       {status === 'rejected' && <div>{error.message}</div>}
       {status === 'resolved' && (
         <>
-          <ImageGallery images={images} />
-          {images.length > 0 && <Button onClick={handleClick} />}
+          <ImageGallery
+            images={images}
+            onGalleryItemClick={onGalleryItemClick}
+          />
+          {images.length > 0 && !error && <Button onClick={handleClick} />}
         </>
       )}
     </>
