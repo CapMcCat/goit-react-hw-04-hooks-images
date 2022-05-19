@@ -21,6 +21,7 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
   const [status, setStatus] = useState(Status.IDLE);
   const [page, setPage] = useState(1);
   const [images, setImages] = useState([]);
+  const [checker, setChecker] = useState(false);
 
   function usePrevious(page) {
     const ref = useRef();
@@ -40,18 +41,20 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
     }
 
     if (prevSearchValue !== nextSearchValue) {
+      console.log(
+        'лог после проверки или предыдущее значение равно следующему'
+      );
       setPage(1);
-      setError(null);
       setPrevSearchValue(nextSearchValue);
-      setStatus(Status.PENDING);
+      setError(null);
 
       API.fetchPictures(nextSearchValue, page, KEY)
         .then(images => {
           if (images.hits.length === 0) {
             toast.error(`Не находим картинок по запросу ${nextSearchValue}`);
-
             return;
           }
+          console.log('лог номера страницы при фетче по новому запросу', page);
           setImages(images.hits);
           setStatus(Status.RESOLVED);
         })
@@ -63,8 +66,11 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
     if (prevPage !== page && page > prevPage) {
       API.fetchPictures(nextSearchValue, page, KEY)
         .then(images => {
+          //setChecker(images.hits.length);
+
           if (images.hits.length === 0) {
             toast(`Закончились картинки по запросу ${nextSearchValue}`);
+            setChecker(true);
             console.log(
               'консоль images.hits внутри if images.hits.length === 0 в запросе на картинки на след странице',
               images.hits
@@ -80,7 +86,9 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
         })
         .catch(error => {
           setError(error);
-          toast(`Закончились картинки по запросу ${nextSearchValue}`);
+          toast(
+            `Некорректный запрос или закончились картинки по запросу ${nextSearchValue}`
+          );
           console.log('консоль ошибки', error);
           //setStatus(Status.REJECTED);
         })
@@ -107,7 +115,7 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
             images={images}
             onGalleryItemClick={onGalleryItemClick}
           />
-          {images.length > 0 && !error && <Button onClick={handleClick} />}
+          {images.length > 0 && !checker && <Button onClick={handleClick} />}
         </>
       )}
     </>

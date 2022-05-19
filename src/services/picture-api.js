@@ -8,7 +8,7 @@ function fetchPictures(inputValue, pageNumber, KEY) {
 
     return Promise.reject(
       new Error(
-        `Что-то пошло не так. Не возможно отобразить картинки по запросу ${inputValue}`
+        `Что-то пошло не так. Не возможно отобразить картинки по запросу ${inputValue}. Попробуйте ввести запрос заново.`
       )
     );
   });
