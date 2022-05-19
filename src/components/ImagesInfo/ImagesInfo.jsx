@@ -47,6 +47,7 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
       setPage(1);
       setPrevSearchValue(nextSearchValue);
       setError(null);
+      setChecker(false);
 
       API.fetchPictures(nextSearchValue, page, KEY)
         .then(images => {
@@ -115,7 +116,9 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
             images={images}
             onGalleryItemClick={onGalleryItemClick}
           />
-          {images.length > 0 && !checker && <Button onClick={handleClick} />}
+          {images.length > 0 && !error && !checker && (
+            <Button onClick={handleClick} />
+          )}
         </>
       )}
     </>
