@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import API from '../../services/picture-api';
@@ -67,8 +68,6 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
     if (prevPage !== page && page > prevPage) {
       API.fetchPictures(nextSearchValue, page, KEY)
         .then(images => {
-          //setChecker(images.hits.length);
-
           if (images.hits.length === 0) {
             toast(`Закончились картинки по запросу ${nextSearchValue}`);
             setChecker(true);
@@ -123,4 +122,9 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
       )}
     </>
   );
+};
+
+ImagesInfo.propTypes = {
+  searchValue: PropTypes.string.isRequired,
+  onGalleryItemClick: PropTypes.func.isRequired,
 };
