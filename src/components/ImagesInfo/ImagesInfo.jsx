@@ -42,9 +42,9 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
     }
 
     if (prevSearchValue !== nextSearchValue) {
-      console.log(
-        'лог после проверки или предыдущее значение равно следующему'
-      );
+      // console.log(
+      //   'лог после проверки или предыдущее значение равно следующему'
+      // );
       setPage(1);
       setPrevSearchValue(nextSearchValue);
       setError(null);
@@ -56,7 +56,7 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
             toast.error(`Не находим картинок по запросу ${nextSearchValue}`);
             return;
           }
-          console.log('лог номера страницы при фетче по новому запросу', page);
+          //console.log('лог номера страницы при фетче по новому запросу', page);
           setImages(images.hits);
           setStatus(Status.RESOLVED);
         })
@@ -71,16 +71,16 @@ export const ImagesInfo = ({ searchValue, onGalleryItemClick }) => {
           if (images.hits.length === 0) {
             toast(`Закончились картинки по запросу ${nextSearchValue}`);
             setChecker(true);
-            console.log(
-              'консоль images.hits внутри if images.hits.length === 0 в запросе на картинки на след странице',
-              images.hits
-            );
+            // console.log(
+            //   'консоль images.hits внутри if images.hits.length === 0 в запросе на картинки на след странице',
+            //   images.hits
+            // );
             return;
           }
-          console.log(
-            'консоль images.hits внутри  запроса на картинки на след странице',
-            images.hits
-          );
+          // console.log(
+          //   'консоль images.hits внутри  запроса на картинки на след странице',
+          //   images.hits
+          // );
           setImages(prevImages => [...prevImages, ...images.hits]);
           setStatus(Status.RESOLVED);
         })
